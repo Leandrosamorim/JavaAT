@@ -58,7 +58,7 @@ public class QuotationAppService {
         return quotation;
     }
 
-    public boolean Remove(int id) {
+    public boolean Remove(String id) {
         try {
             _quotationRepository.removeById(id);
         } catch (SQLException e) {
@@ -78,8 +78,11 @@ public class QuotationAppService {
     }
 
     public void ExportAllAsCsv() {
-        try (PrintWriter writer = new PrintWriter(
-                new File("AllQuotations" + new SimpleDateFormat("dd/MM/yyyy").format(LocalDate.now()) + ".csv"))) {
+        String pattern = "MM-dd-yyyy";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        String date = simpleDateFormat.format(new Date().getTime());
+
+        try (PrintWriter writer = new PrintWriter(new File("Quotations" + date + ".csv"))) {
 
             var list = this.GetAll();
             String header = "Exported All Quotations \n";

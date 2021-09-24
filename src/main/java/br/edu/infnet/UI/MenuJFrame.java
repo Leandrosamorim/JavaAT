@@ -15,7 +15,9 @@ import javax.swing.table.DefaultTableModel;
 import com.mysql.cj.x.protobuf.MysqlxCrud.Update;
 
 import br.edu.infnet.appservices.ProductAppService;
+import br.edu.infnet.appservices.QuotationAppService;
 import br.edu.infnet.database.ProductRepository;
+import br.edu.infnet.database.QuotationRepository;
 import br.edu.infnet.models.Product;
 
 /**
@@ -26,6 +28,8 @@ public class MenuJFrame extends javax.swing.JFrame {
 
     ProductRepository _productRepository;
     ProductAppService _productAppService;
+    QuotationAppService _quotationAppService;
+    QuotationRepository _quotationRepository;
 
     public void UpdateTable(){
         var returnedList = _productAppService.GetAll();
@@ -36,6 +40,15 @@ public class MenuJFrame extends javax.swing.JFrame {
         jTable2.setModel(model);
     }
 
+    public void UpdateQuotationTable(){
+        var returnedList = _quotationAppService.GetAll();
+
+        DefaultTableModel model = new DefaultTableModel(new Object[] { "Id", "Product", "Units", "Price", "Total" },
+                0);
+        returnedList.forEach(x -> model.addRow(x.GetContent()));
+        jTable3.setModel(model);
+    }
+
     /**
      * Creates new form MenuJFrame
      */
@@ -44,9 +57,13 @@ public class MenuJFrame extends javax.swing.JFrame {
         try {
             _productRepository = ProductRepository.getInstance();
             _productAppService = new ProductAppService(_productRepository);
+            _quotationRepository = QuotationRepository.getInstance();
+            _quotationAppService = new QuotationAppService(_quotationRepository);
             _productRepository.init();
+            _quotationRepository.init();
 
             UpdateTable();
+            UpdateQuotationTable();
 
         } catch (SQLException e) {
             _productRepository.close();
@@ -240,7 +257,7 @@ public class MenuJFrame extends javax.swing.JFrame {
         });
 
         jButton11.setText("Export selected as csv");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jButton11.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton11ActionPerformed(evt);
             }
@@ -378,6 +395,46 @@ public class MenuJFrame extends javax.swing.JFrame {
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         UpdateTable();
+    }
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton1ActionPerformed
+        new AddQuotationJFrame().setVisible(true);
+        MenuJFrame.super.dispose();
+    }
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton1ActionPerformed
+        var row = jTable3.getSelectedRow();
+        var id = jTable3.getModel().getValueAt(row, 0).toString();
+        var quotation = _quotationAppService.GetById(id);
+        var jFrame = new AddQuotationJFrame(quotation);
+        
+        MenuJFrame.super.dispose();
+        jFrame.setVisible(true);
+    }
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton1ActionPerformed
+        var row = jTable3.getSelectedRow();
+        var id = jTable3.getModel().getValueAt(row, 0).toString();
+        _quotationAppService.Remove(id);
+        UpdateQuotationTable();
+    }
+    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton1ActionPerformed
+        var row = jTable3.getSelectedRow();
+        var name = jTable3.getModel().getValueAt(row, 1).toString();
+        var products = _quotationAppService.GetByProduct(name);
+
+        DefaultTableModel model = new DefaultTableModel(new Object[] { "Id", "Name", "Amount", "Price", "Total" },
+                0);
+        products.forEach(x -> model.addRow(x.GetContent()));
+        jTable3.setModel(model);
+    }
+    private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton1ActionPerformed
+        UpdateQuotationTable();
+    }
+    private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton1ActionPerformed
+        var row = jTable3.getSelectedRow();
+        var id = jTable3.getModel().getValueAt(row, 0).toString();
+        _quotationAppService.ExportById(id);
+    }
+    private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton1ActionPerformed
+        _quotationAppService.ExportAllAsCsv();
     }
 
     /**

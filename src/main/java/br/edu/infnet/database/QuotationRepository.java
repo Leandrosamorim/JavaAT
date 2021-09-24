@@ -150,26 +150,26 @@ public class QuotationRepository {
     public boolean edit(Quotation quotation) throws SQLException {
         String sqlStatement = """
                 UPDATE quotations
-                SET (PRODUCT, TOTAL)
-                VALUES (?, ?)
+                SET PRODUCT=(?), AMOUNT=(?), TOTAL=(?)
                 WHERE Id = (?)
                 """;
 
         PreparedStatement preparedStatement = Connection.prepareStatement(sqlStatement);
         preparedStatement.setString(1, quotation.GetProduct().GetName());
-        preparedStatement.setDouble(2, quotation.GetTotal());
-        preparedStatement.setString(3, quotation.GetId());
+        preparedStatement.setInt(2, quotation.GetAmount());
+        preparedStatement.setDouble(3, quotation.GetTotal());
+        preparedStatement.setString(4, quotation.GetId());
         return preparedStatement.execute();
     }
 
-    public boolean removeById(int id) throws SQLException {
+    public boolean removeById(String id) throws SQLException {
         String sqlStatement = """
                 DELETE FROM quotations
                 WHERE Id = (?)
                 """;
 
         PreparedStatement preparedStatement = Connection.prepareStatement(sqlStatement);
-        preparedStatement.setInt(1, id);
+        preparedStatement.setString(1, id);
         return preparedStatement.execute();
     }
 

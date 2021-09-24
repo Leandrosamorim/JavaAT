@@ -72,9 +72,20 @@ public class Quotation {
         public void SetTotal() {
             this.Total = this.Calculate();
         }
+        public void SetProduct(Product product) {
+            this.Product = product;
+        }
+        public void SetAmount(int amount) {
+            this.Amount = amount;
+        }
 
         public double Calculate(){
-            return Product.GetAmount() * Product.GetPrice();
+            return this.GetAmount() * this.GetProduct().GetPrice();
+        }
+
+        public String[] GetContent(){
+            String[] strArr = {(this.GetId()), this.GetProduct().GetName(), Integer.toString(this.Amount), Double.toString(this.GetProduct().GetPrice()), Double.toString(this.Total)};
+            return strArr;
         }
 
 
